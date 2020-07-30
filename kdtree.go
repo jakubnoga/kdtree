@@ -2,18 +2,16 @@ package kdtree
 
 import (
 	"encoding/json"
-	"log"
 	"sort"
-	"time"
 )
 
 type KdTree struct {
 	Left, Right *KdTree
 	Dim         int
-	Point       []uint8
+	Point       []uint32
 }
 
-func Create(points [][]uint8, depth int) *KdTree {
+func Create(points [][]uint32, depth int) *KdTree {
 	tree := new(KdTree)
 	tree.Dim = depth % len(points[0])
 
@@ -37,9 +35,8 @@ func Create(points [][]uint8, depth int) *KdTree {
 	return tree
 }
 
-func (tree *KdTree) NearestNeighbour(point []uint8) *KdTree {
-	// defer duration(track("nn"))
-	var dist, bestNorm uint8
+func (tree *KdTree) NearestNeighbour(point []uint32) *KdTree {
+	var dist, bestNorm uint32
 	var candidate, best, other *KdTree
 
 	if tree.Left == nil && tree.Right == nil {
@@ -57,14 +54,7 @@ func (tree *KdTree) NearestNeighbour(point []uint8) *KdTree {
 	}
 
 	candidateNorm := candidate.norm(point)
-	if candidateNorm == 0 {
-		return candidate
-	}
-
 	treeNorm := tree.norm(point)
-	if treeNorm == 0 {
-		return tree
-	}
 
 	if candidateNorm < treeNorm {
 		best = candidate
@@ -89,7 +79,7 @@ func (tree *KdTree) NearestNeighbour(point []uint8) *KdTree {
 	return best
 }
 
-func (tree *KdTree) distance(point []uint8, dim int) uint8 {
+func (tree *KdTree) distance(point []uint32, dim int) uint32 {
 	x1 := tree.Point[dim]
 	x2 := point[dim]
 
@@ -101,8 +91,8 @@ func (tree *KdTree) distance(point []uint8, dim int) uint8 {
 	return -d	
 }
 
-func (tree *KdTree) norm(point []uint8) uint8 {
-	var sum uint8 = 0
+func (tree *KdTree) norm(point []uint32) uint32 {
+	var sum uint32 = 0
 	for idx, val := range point {
 		d := val - tree.Point[idx]
 		sum += d * d
@@ -118,12 +108,4 @@ func (tree *KdTree) ToJson() string {
 	}
 
 	return string(marshal)
-}
-
-func track(msg string) (string, time.Time) {
-	return msg, time.Now()
-}
-
-func duration(msg string, start time.Time) {
-	log.Printf("%v: %v\n", msg, time.Since(start).Microseconds())
 }

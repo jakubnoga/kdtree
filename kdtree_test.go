@@ -7,12 +7,12 @@ import (
 )
 
 func TestNearestNeighbour(t *testing.T) {
-	tree := Create([][]float64{{2, 3}, {5, 4}, {9, 6}, {4, 7}, {8, 1}, {7, 2}}, 0)
+	tree := Create([][]uint32{{2, 3}, {5, 4}, {9, 6}, {4, 7}, {8, 1}, {7, 2}}, 0)
 
-	cases := [][]float64{
-		{10, 10}, {0, 4}, {3, 0}, {0, 10}, {6.9, 4},
+	cases := [][]uint32{
+		{10, 10}, {0, 4}, {3, 0}, {0, 10}, {6, 4},
 	}
-	expected := [][]float64{
+	expected := [][]uint32{
 		{9, 6}, {2, 3}, {2, 3}, {4, 7}, {5, 4},
 	}
 
@@ -21,7 +21,7 @@ func TestNearestNeighbour(t *testing.T) {
 	}
 }
 
-func testCaseRunnerProvider(tree *KdTree, testCase []float64, expected []float64) func(t *testing.T) {
+func testCaseRunnerProvider(tree *KdTree, testCase []uint32, expected []uint32) func(t *testing.T) {
 	return func(t *testing.T) {
 		best := tree.NearestNeighbour(testCase)
 		if !reflect.DeepEqual(best.Point, expected) {
@@ -33,16 +33,14 @@ func testCaseRunnerProvider(tree *KdTree, testCase []float64, expected []float64
 
 func TestKdTree_NearestNeighbour(t *testing.T) {
 	type args struct {
-		point []float64
+		point []uint32
 	}
 	tests := []struct {
 		name string
 		tree *KdTree
 		args args
 		want *KdTree
-	}{
-		// TODO: Add test cases.
-	}
+	}{}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
 			if got := tt.tree.NearestNeighbour(tt.args.point); !reflect.DeepEqual(got, tt.want) {
